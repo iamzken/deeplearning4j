@@ -25,6 +25,8 @@ import org.deeplearning4j.nn.api.layers.LayerConstraint;
 import org.deeplearning4j.nn.conf.InputPreProcessor;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.Updater;
+import org.deeplearning4j.nn.conf.dropout.Dropout;
+import org.deeplearning4j.nn.conf.dropout.IDropout;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.misc.FrozenLayer;
 import org.deeplearning4j.nn.conf.layers.variational.VariationalAutoencoder;
@@ -73,13 +75,13 @@ import java.util.List;
 @NoArgsConstructor
 public abstract class Layer implements Serializable, Cloneable {
     protected String layerName;
-    protected double dropOut;
+    protected IDropout iDropout;
     protected List<LayerConstraint> constraints;
 
 
     public Layer(Builder builder) {
         this.layerName = builder.layerName;
-        this.dropOut = builder.dropOut;
+        this.iDropout = builder.iDropout;
         this.constraints = builder.constraints;
     }
 
@@ -90,7 +92,7 @@ public abstract class Layer implements Serializable, Cloneable {
      */
     public void resetLayerDefaultConfig() {
         //clear the learning related params for all layers in the origConf and set to defaults
-        this.setDropOut(Double.NaN);
+        this.iDropout = null;
     }
 
     @Override
@@ -218,7 +220,7 @@ public abstract class Layer implements Serializable, Cloneable {
     @SuppressWarnings("unchecked")
     public abstract static class Builder<T extends Builder<T>> {
         protected String layerName = null;
-        protected double dropOut = Double.NaN;
+        protected IDropout iDropout;
         protected List<LayerConstraint> constraints = null;
 
         /**
@@ -253,8 +255,12 @@ public abstract class Layer implements Serializable, Cloneable {
          * @param inputRetainProbability Dropout probability (probability of retaining each input activation value for a layer)
          */
         public T dropOut(double inputRetainProbability) {
-            this.dropOut = inputRetainProbability;
-            return (T) this;
+            return dropOut(new Dropout(inputRetainProbability));
+        }
+
+        public T dropOut(IDropout dropout){
+            this.iDropout = dropout;
+            return (T)this;
         }
 
         /**

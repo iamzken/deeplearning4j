@@ -2212,11 +2212,6 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
     }
 
     @Override
-    public void applyLearningRateScoreDecay() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
     public void fit(INDArray data) {
         throw new UnsupportedOperationException("Cannot pretrain ComputationGraph with single INDArray");
     }

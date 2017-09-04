@@ -205,8 +205,8 @@ public abstract class BaseMultiLayerUpdater<T extends Model> implements Updater 
     }
 
     @Override
-    public void update(Layer layer, Gradient gradient, int iteration, int batchSize) {
-        update(gradient, iteration, batchSize);
+    public void update(Layer layer, Gradient gradient, int iteration, int epoch, int batchSize) {
+        update(gradient, iteration, epoch, batchSize);
     }
 
     /**
@@ -220,7 +220,7 @@ public abstract class BaseMultiLayerUpdater<T extends Model> implements Updater 
      * @param iteration The current iteration (i.e., number of parameter updates so far)
      * @param batchSize The current minibatch size (number of examples)
      */
-    public void update(Gradient gradient, int iteration, int batchSize) {
+    public void update(Gradient gradient, int iteration, int epoch, int batchSize) {
 
         //First: check if gradient is standard or external...
         //In a MultiLayerNetwork, the INDArray returned by .gradient() is always the standard full view array
@@ -275,19 +275,19 @@ public abstract class BaseMultiLayerUpdater<T extends Model> implements Updater 
                                 .getAndActivateWorkspace(ComputationGraph.workspaceFeedForward)) {
                     if (isExternal) {
                         //RL4J etc type case: calculate gradients in 1 net, update them in another
-                        ub.updateExternalGradient(iteration, gradient.gradient(), getParams());
+                        ub.updateExternalGradient(iteration, epoch, gradient.gradient(), getParams());
                     } else {
                         //Standard case
-                        ub.update(iteration);
+                        ub.update(iteration, epoch);
                     }
                 }
             } else {
                 if (isExternal) {
                     //RL4J etc type case: calculate gradients in 1 net, update them in another
-                    ub.updateExternalGradient(iteration, gradient.gradient(), getParams());
+                    ub.updateExternalGradient(iteration, epoch, gradient.gradient(), getParams());
                 } else {
                     //Standard case
-                    ub.update(iteration);
+                    ub.update(iteration, epoch);
                 }
             }
         }

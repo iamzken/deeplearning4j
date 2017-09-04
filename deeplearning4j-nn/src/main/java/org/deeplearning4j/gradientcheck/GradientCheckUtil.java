@@ -128,7 +128,7 @@ public class GradientCheckUtil {
                 IUpdater u = bl.getIUpdater();
                 if (u instanceof Sgd) {
                     //Must have LR of 1.0
-                    double lr = bl.getLearningRate();
+                    double lr = ((Sgd) u).getLearningRate();
                     if (lr != 1.0) {
                         throw new IllegalStateException("When using SGD updater, must also use lr=1.0 for layer "
                                         + layerCount + "; got " + u + " with lr=" + lr + " for layer \""
@@ -307,7 +307,7 @@ public class GradientCheckUtil {
                 IUpdater u = bl.getIUpdater();
                 if (u instanceof Sgd) {
                     //Must have LR of 1.0
-                    double lr = bl.getLearningRate();
+                    double lr = ((Sgd) u).getLearningRate();
                     if (lr != 1.0) {
                         throw new IllegalStateException("When using SGD updater, must also use lr=1.0 for layer "
                                         + layerCount + "; got " + u + " with lr=" + lr + " for layer \""
